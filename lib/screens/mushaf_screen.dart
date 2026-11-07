@@ -114,6 +114,15 @@ class _MushafScreenState extends State<MushafScreen> {
         title: Text('سورة ${surah.name} · $_page', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
         actions: [
           IconButton(
+            tooltip: 'المفضلة',
+            icon: Icon(Storage.isFavorite(_page) ? Icons.star_rounded : Icons.star_border_rounded,
+                color: const Color(0xFFC9A227)),
+            onPressed: () async {
+              await Storage.toggleFavorite(_page);
+              setState(() {});
+            },
+          ),
+          IconButton(
             tooltip: 'علامة',
             icon: Icon(marked ? Icons.bookmark : Icons.bookmark_border,
                 color: marked ? const Color(0xFF1F6E43) : null),

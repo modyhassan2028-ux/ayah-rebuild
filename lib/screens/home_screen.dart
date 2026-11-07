@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_shell.dart';
 import '../data/quran_data.dart';
 import '../services/storage.dart';
 import 'mushaf_screen.dart';
@@ -40,6 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final list = QuranData.search(_q);
     return Scaffold(
       appBar: AppBar(
+        leading: Builder(builder: (c) => IconButton(
+          icon: const Icon(Icons.menu_rounded),
+          onPressed: AppShell.openDrawer,
+        )),
+      
         title: Row(children: [
           Image.asset('assets/images/ic_launcher.png', width: 28,
               errorBuilder: (_, __, ___) => const SizedBox()),

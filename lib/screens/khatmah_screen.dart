@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_shell.dart';
 import '../services/khatmah_service.dart';
 import 'mushaf_screen.dart';
 
@@ -20,7 +21,12 @@ class _KhatmahScreenState extends State<KhatmahScreen> {
   Widget build(BuildContext context) {
     final st = KhatmahService.current;
     return Scaffold(
-      appBar: AppBar(title: const Text('برنامج الختمة')),
+      appBar: AppBar(
+        leading: Builder(builder: (c) => IconButton(
+          icon: const Icon(Icons.menu_rounded),
+          onPressed: AppShell.openDrawer,
+        )),
+      title: const Text('برنامج الختمة')),
       body: st == null ? _plans() : _active(st),
     );
   }

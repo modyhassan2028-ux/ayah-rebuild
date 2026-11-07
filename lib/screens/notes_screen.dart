@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_shell.dart';
 import '../data/quran_data.dart';
 import '../services/notes_service.dart';
 import 'mushaf_screen.dart';
@@ -26,7 +27,12 @@ class _NotesScreenState extends State<NotesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('الملاحظات')),
+      appBar: AppBar(
+        leading: Builder(builder: (c) => IconButton(
+          icon: const Icon(Icons.menu_rounded),
+          onPressed: AppShell.openDrawer,
+        )),
+      title: const Text('الملاحظات')),
       body: _notes.isEmpty
           ? const Center(child: Text('لا توجد ملاحظات بعد — أضفها من المصحف'))
           : ListView(

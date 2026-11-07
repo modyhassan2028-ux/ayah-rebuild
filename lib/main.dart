@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'data/quran_data.dart';
 import 'services/storage.dart';
-import 'screens/home_screen.dart';
+import 'screens/app_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,15 +42,20 @@ class _AyahAppState extends State<AyahApp> {
       theme: ThemeData(
         colorScheme: base,
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF7F6F2),
-        appBarTheme: const AppBarTheme(backgroundColor: Color(0xFFF7F6F2), surfaceTintColor: Colors.transparent),
+        scaffoldBackgroundColor: const Color(0xFFFEF9F1),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFFF2E9DD),
+          foregroundColor: Color(0xFF4D3322),
+          surfaceTintColor: Colors.transparent,
+          elevation: 2,
+        ),
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1F6E43), brightness: Brightness.dark),
         useMaterial3: true,
       ),
       themeMode: _dark ? ThemeMode.dark : ThemeMode.light,
-      home: const HomeScreen(),
+      home: const AppShell(),
     );
   }
 }
