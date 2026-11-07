@@ -264,7 +264,7 @@ class _PageView extends StatelessWidget {
       child: Column(
         children: List.generate(15, (i) => Expanded(
           child: Image.asset(
-            'assets/images/pages/$page/${i + 1}.png',
+            'assets/quran-images/$page-${i + 1}.png',
             fit: BoxFit.fill,
             filterQuality: FilterQuality.medium,
             errorBuilder: (_, __, ___) => const SizedBox(),
