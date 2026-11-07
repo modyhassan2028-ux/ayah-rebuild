@@ -6,6 +6,9 @@ import 'bookmarks_screen.dart';
 import 'settings_screen.dart';
 import 'listen_screen.dart';
 import 'khatmah_screen.dart';
+import 'notes_screen.dart';
+import 'reminders_screen.dart';
+import '../services/reminders_service.dart';
 import '../services/khatmah_service.dart';
 
 /// الرئيسية — متابعة القراءة + الختمة + فهرس السور
@@ -61,6 +64,22 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.event_repeat_outlined),
             onPressed: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const KhatmahScreen())),
+          ),
+          IconButton(
+            tooltip: 'الملاحظات',
+            icon: const Icon(Icons.edit_note),
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const NotesScreen())),
+          ),
+          IconButton(
+            tooltip: 'التذكيرات',
+            icon: const Icon(Icons.notifications_none),
+            onPressed: () async {
+              await RemindersService.init();
+              if (!context.mounted) return;
+              await Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const RemindersScreen()));
+            },
           ),
           IconButton(
             tooltip: 'الإعدادات',

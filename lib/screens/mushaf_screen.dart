@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../data/quran_data.dart';
 import '../services/storage.dart';
 import '../services/tafsir_service.dart';
+import '../services/notes_service.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// المصحف — كل صفحة 15 سطرًا من صور التطبيق الأصلية (assets/images/pages)
 class MushafScreen extends StatefulWidget {
@@ -118,6 +120,39 @@ class _MushafScreenState extends State<MushafScreen> {
             onPressed: () async {
               await Storage.toggleBookmark(_page);
               setState(() {});
+            },
+          ),
+          IconButton(
+            tooltip: 'ملاحظة',
+            icon: const Icon(Icons.edit_note),
+            onPressed: () async {
+              final c = TextEditingController();
+              final ok = await showDialog<bool>(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: Text('ملاحظة على صفحة $_page'),
+                  content: TextField(controller: c, maxLines: 4, autofocus: true,
+                      decoration: const InputDecoration(hintText: 'اكتب ملاحظتك')),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('إلغاء')),
+                    FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('حفظ')),
+                  ],
+                ),
+              );
+              if (ok == true && c.text.trim().isNotEmpty) {
+                await NotesService.add(_page, c.text.trim());
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم حفظ الملاحظة')));
+                }
+              }
+            },
+          ),
+          IconButton(
+            tooltip: 'مشاركة',
+            icon: const Icon(Icons.share_outlined),
+            onPressed: () {
+              final s = QuranData.surahOfPage(_page);
+              Share.share('سورة ${s.name} — صفحة $_page من المصحف\nAyah');
             },
           ),
           IconButton(tooltip: 'التفسير', icon: const Icon(Icons.article_outlined), onPressed: _tafsir),
