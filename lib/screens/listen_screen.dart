@@ -13,8 +13,8 @@ class ListenScreen extends StatefulWidget {
 }
 
 class _ListenScreenState extends State<ListenScreen> {
-  List<Map<String, String>> _reciters = [];
-  Map<String, String>? _sel;
+  List<Map<String, dynamic>> _reciters = [];
+  Map<String, dynamic>? _sel;
 
   @override
   void initState() {
@@ -26,7 +26,7 @@ class _ListenScreenState extends State<ListenScreen> {
     final raw = await rootBundle.loadString('assets/data/reciters.json');
     final m = json.decode(raw) as Map<String, dynamic>;
     setState(() => _reciters =
-        (m['reciters'] as List).map((e) => (e as Map).cast<String, String>()).toList());
+        (m['reciters'] as List).map((e) => (e as Map).cast<String, dynamic>()).toList());
   }
 
   Future<void> _pickSurah() async {
@@ -45,15 +45,16 @@ class _ListenScreenState extends State<ListenScreen> {
       ),
     );
     if (s != null) {
-      await AudioService.i.playSurah(_sel!['key']!, _sel!['name']!, s);
+      await AudioService.i.playSurah(_sel!['key'] as String, _sel!['name'] as String, s,
+          variant: _sel!['variant'] as int?);
       if (mounted) setState(() {});
     }
   }
 
   /// تصنيف القارئ من اسمه كما هو في reciters.json:
   /// ما في اسمه (مرتل) قسم المرتل، وما في اسمه (مجود) قسم المجود، والباقي مرتل.
-  static String _category(Map<String, String> r) {
-    final n = r['name'] ?? '';
+  static String _category(Map<String, dynamic> r) {
+    final n = (r['name'] ?? '') as String;
     if (n.contains('مجود')) return 'المجود';
     if (n.contains('معلم')) return 'المعلم';
     return 'المرتل';
@@ -83,7 +84,8 @@ class _ListenScreenState extends State<ListenScreen> {
             child: Icon(Icons.record_voice_over, size: 16, color: Color(0xFF007330)),
           ),
           title: Text(r['name']!),
-          subtitle: Text(r['key']!, style: const TextStyle(fontSize: 11)),
+          subtitle: Text('${r['key']} · نسخة ${r['variant']}',
+              style: const TextStyle(fontSize: 11)),
           onTap: () => setState(() => _sel = r),
         ));
       }
@@ -108,7 +110,8 @@ class _ListenScreenState extends State<ListenScreen> {
             child: Icon(Icons.record_voice_over, size: 16, color: Color(0xFF007330)),
           ),
           title: Text(r['name']!),
-          subtitle: Text(r['key']!, style: const TextStyle(fontSize: 11)),
+          subtitle: Text('${r['key']} · نسخة ${r['variant']}',
+              style: const TextStyle(fontSize: 11)),
           onTap: () => setState(() => _sel = r),
         ));
       }
