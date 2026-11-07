@@ -173,8 +173,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ]),
           )),
           const SizedBox(height: 18),
-          const Text('السور', style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w800)),
+          Text(_q.trim().isEmpty ? 'السور' : 'نتائج البحث (${list.length})',
+              style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w800)),
           const SizedBox(height: 8),
+          if (list.isEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 26),
+              alignment: Alignment.center,
+              child: const Text('لا توجد سورة بهذا الاسم', style: TextStyle(color: Colors.black54)),
+            ),
           ...list.map((s) => Material(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
