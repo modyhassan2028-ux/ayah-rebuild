@@ -50,25 +50,78 @@ class _ListenScreenState extends State<ListenScreen> {
     }
   }
 
+  /// تصنيف القارئ من اسمه كما هو في reciters.json:
+  /// ما في اسمه (مرتل) قسم المرتل، وما في اسمه (مجود) قسم المجود، والباقي مرتل.
+  static String _category(Map<String, String> r) {
+    final n = r['name'] ?? '';
+    if (n.contains('مجود')) return 'المجود';
+    if (n.contains('معلم')) return 'المعلم';
+    return 'المرتل';
+  }
+
+  /// قائمة القراء مقسّمة برؤوس أقسام (reciters_row_category في الأصل)
+  List<Widget> _groupedReciters() {
+    final out = <Widget>[];
+    // بيانات reciters.json ما فيهاش حقل تصنيف؛ لو كله في قسم واحد نعرض رأس واحد صادق
+    final cats = {'المرتل', 'المجود', 'المعلم'}
+        .where((c) => _reciters.any((r) => _category(r) == c))
+        .toList();
+    if (cats.length <= 1) {
+      out.add(Container(
+        width: double.infinity,
+        color: const Color(0xFFF5EFE9),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+        child: Text('القراء (${_reciters.length})',
+            style: const TextStyle(
+                fontSize: 13, fontWeight: FontWeight.w800, color: Color(0xFF007330))),
+      ));
+      for (final r in _reciters) {
+        out.add(ListTile(
+          leading: const CircleAvatar(
+            radius: 16,
+            backgroundColor: Color(0xFFEAF5EE),
+            child: Icon(Icons.record_voice_over, size: 16, color: Color(0xFF007330)),
+          ),
+          title: Text(r['name']!),
+          subtitle: Text(r['key']!, style: const TextStyle(fontSize: 11)),
+          onTap: () => setState(() => _sel = r),
+        ));
+      }
+      return out;
+    }
+    for (final cat in const ['المرتل', 'المجود', 'المعلم']) {
+      final items = _reciters.where((r) => _category(r) == cat).toList();
+      if (items.isEmpty) continue;
+      out.add(Container(
+        width: double.infinity,
+        color: const Color(0xFFF5EFE9),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+        child: Text('$cat (${items.length})',
+            style: const TextStyle(
+                fontSize: 13, fontWeight: FontWeight.w800, color: Color(0xFF007330))),
+      ));
+      for (final r in items) {
+        out.add(ListTile(
+          leading: const CircleAvatar(
+            radius: 16,
+            backgroundColor: Color(0xFFEAF5EE),
+            child: Icon(Icons.record_voice_over, size: 16, color: Color(0xFF007330)),
+          ),
+          title: Text(r['name']!),
+          subtitle: Text(r['key']!, style: const TextStyle(fontSize: 11)),
+          onTap: () => setState(() => _sel = r),
+        ));
+      }
+    }
+    return out;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('الاستماع')),
       body: _sel == null
-          ? ListView(
-              children: _reciters
-                  .map((r) => ListTile(
-                        leading: const CircleAvatar(
-                          radius: 16,
-                          backgroundColor: Color(0xFFEAF5EE),
-                          child: Icon(Icons.record_voice_over, size: 16, color: Color(0xFF1F6E43)),
-                        ),
-                        title: Text(r['name']!),
-                        subtitle: Text(r['key']!, style: const TextStyle(fontSize: 11)),
-                        onTap: () => setState(() => _sel = r),
-                      ))
-                  .toList(),
-            )
+          ? ListView(children: _groupedReciters())
           : Column(
               children: [
                 Container(

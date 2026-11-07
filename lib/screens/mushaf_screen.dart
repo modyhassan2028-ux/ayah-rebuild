@@ -1,4 +1,10 @@
+import 'dart:io';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'tafsir_screen.dart';
 import '../data/quran_data.dart';
 import '../services/storage.dart';
@@ -107,6 +113,31 @@ class _MushafScreenState extends State<MushafScreen> {
   }
 
   @override
+  final GlobalKey _captureKey = GlobalKey();
+
+  /// مشاركة صورة الصفحة — يُرسم المصحف في صورة PNG ثم تُشارك كملف
+  Future<void> _shareImage() async {
+    try {
+      final boundary =
+          _captureKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      if (boundary == null) return;
+      final image = await boundary.toImage(pixelRatio: 2.5);
+      final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (bytes == null) return;
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/ayah_page_$_page.png');
+      await file.writeAsBytes(bytes.buffer.asUint8List());
+      await Share.shareXFiles([XFile(file.path)],
+          text: 'سورة ${QuranData.surahOfPage(_page).name} — صفحة $_page');
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('تعذّر إنشاء الصورة')));
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final surah = QuranData.surahOfPage(_page);
     final marked = Storage.bookmarks.contains(_page);
@@ -114,6 +145,11 @@ class _MushafScreenState extends State<MushafScreen> {
       appBar: AppBar(
         title: Text('سورة ${surah.name} · $_page', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
         actions: [
+          IconButton(
+            tooltip: 'مشاركة صورة',
+            icon: const Icon(Icons.ios_share_rounded),
+            onPressed: _shareImage,
+          ),
           IconButton(
             tooltip: 'التفسير',
             icon: const Icon(Icons.translate_rounded),
@@ -190,7 +226,10 @@ class _MushafScreenState extends State<MushafScreen> {
                 setState(() => _page = i + 1);
                 Storage.setLastPage(i + 1);
               },
-              itemBuilder: (c, i) => _PageView(page: i + 1),
+              itemBuilder: (c, i) => RepaintBoundary(
+                key: i + 1 == _page ? _captureKey : null,
+                child: _PageView(page: i + 1),
+              ),
             ),
           ),
           Container(
