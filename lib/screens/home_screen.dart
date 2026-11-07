@@ -4,6 +4,7 @@ import '../services/storage.dart';
 import 'mushaf_screen.dart';
 import 'bookmarks_screen.dart';
 import 'settings_screen.dart';
+import 'listen_screen.dart';
 
 /// الرئيسية — متابعة القراءة + الختمة + فهرس السور
 class HomeScreen extends StatefulWidget {
@@ -40,6 +41,12 @@ class _HomeScreenState extends State<HomeScreen> {
           const Text('Ayah', style: TextStyle(fontWeight: FontWeight.w800)),
         ]),
         actions: [
+          IconButton(
+            tooltip: 'الاستماع',
+            icon: const Icon(Icons.headphones_outlined),
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const ListenScreen())),
+          ),
           IconButton(
             tooltip: 'العلامات',
             icon: const Icon(Icons.bookmarks_outlined),

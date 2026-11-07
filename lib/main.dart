@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'data/quran_data.dart';
 import 'services/storage.dart';
 import 'screens/home_screen.dart';
@@ -30,6 +31,13 @@ class _AyahAppState extends State<AyahApp> {
     final base = ColorScheme.fromSeed(seedColor: const Color(0xFF1F6E43));
     return MaterialApp(
       title: 'Ayah',
+      locale: const Locale('ar'),
+      supportedLocales: const [Locale('ar'), Locale('en')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: base,
