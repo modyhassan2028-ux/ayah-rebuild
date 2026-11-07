@@ -17,7 +17,7 @@ android {
         }
     }
     namespace = "com.ayah.ayah_rebuild"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = maxOf(36, flutter.compileSdkVersion)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

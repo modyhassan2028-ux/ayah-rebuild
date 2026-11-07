@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
+import '../services/backup_service.dart';
+import 'package:share_plus/share_plus.dart';
+import '../services/backup_service.dart';
 import '../services/storage.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -35,6 +40,53 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           const Divider(),
+          ListTile(
+            leading: const Icon(Icons.backup_outlined),
+            title: const Text('إنشاء نسخة احتياطية'),
+            subtitle: const Text('العلامات والملاحظات والتقدّم في ملف JSON'),
+            onTap: () async {
+              final path = await BackupService.writeFile();
+              await Share.shareXFiles([XFile(path)], text: 'نسخة احتياطية من Ayah');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.restore),
+            title: const Text('استرجاع من نسخة احتياطية'),
+            subtitle: const Text('اختر ملف JSON سبق تصديره'),
+            onTap: () async {
+              final clip = await Clipboard.getData('text/plain');
+              final c = TextEditingController(text: clip?.text ?? '');
+              if (!mounted) return;
+              final ok = await showDialog<bool>(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text('استرجاع من نسخة'),
+                  content: TextField(
+                    controller: c,
+                    maxLines: 6,
+                    decoration: const InputDecoration(hintText: 'الصق مسار ملف النسخة أو محتوى JSON'),
+                  ),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('إلغاء')),
+                    FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('استرجاع')),
+                  ],
+                ),
+              );
+              if (ok != true) return;
+              final txt = c.text.trim();
+              int n;
+              try {
+                n = txt.startsWith('{')
+                    ? await BackupService.restoreJson(txt)
+                    : await BackupService.restoreFromPath(txt);
+              } catch (_) {
+                n = -1;
+              }
+              if (!mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(n < 0 ? 'الملف غير صالح' : 'تم استرجاع $n ملاحظة والعلامات')));
+            },
+          ),
           const ListTile(title: Text('عن التطبيق')),
           const Padding(
             padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
