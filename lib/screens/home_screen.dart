@@ -5,6 +5,8 @@ import 'mushaf_screen.dart';
 import 'bookmarks_screen.dart';
 import 'settings_screen.dart';
 import 'listen_screen.dart';
+import 'khatmah_screen.dart';
+import '../services/khatmah_service.dart';
 
 /// الرئيسية — متابعة القراءة + الختمة + فهرس السور
 class HomeScreen extends StatefulWidget {
@@ -21,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _last = Storage.lastPage;
+    KhatmahService.load();
   }
 
   Future<void> _open(int page) async {
@@ -52,6 +55,12 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.bookmarks_outlined),
             onPressed: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const BookmarksScreen())),
+          ),
+          IconButton(
+            tooltip: 'برنامج الختمة',
+            icon: const Icon(Icons.event_repeat_outlined),
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const KhatmahScreen())),
           ),
           IconButton(
             tooltip: 'الإعدادات',
@@ -113,7 +122,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 14),
           // تقدّم الختمة
-          Container(
+          InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () async {
+              await Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const KhatmahScreen()));
+              if (mounted) setState(() {});
+            },
+            child: Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -136,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text('${((_last / QuranData.totalPages) * 100).toStringAsFixed(1)}% من المصحف',
                   style: const TextStyle(fontSize: 11, color: Colors.black54)),
             ]),
-          ),
+          )),
           const SizedBox(height: 18),
           const Text('السور', style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w800)),
           const SizedBox(height: 8),
