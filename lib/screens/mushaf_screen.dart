@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'tafsir_screen.dart';
 import '../data/quran_data.dart';
 import '../services/storage.dart';
 import '../services/tafsir_service.dart';
@@ -113,6 +114,15 @@ class _MushafScreenState extends State<MushafScreen> {
       appBar: AppBar(
         title: Text('سورة ${surah.name} · $_page', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
         actions: [
+          IconButton(
+            tooltip: 'التفسير',
+            icon: const Icon(Icons.translate_rounded),
+            onPressed: () async {
+              await Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => TafsirScreen(initialPage: _page)));
+              setState(() {});
+            },
+          ),
           IconButton(
             tooltip: 'المفضلة',
             icon: Icon(Storage.isFavorite(_page) ? Icons.star_rounded : Icons.star_border_rounded,

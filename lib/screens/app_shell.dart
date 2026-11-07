@@ -9,6 +9,8 @@ import 'listen_screen.dart';
 import 'reminders_screen.dart';
 import 'settings_screen.dart';
 import 'about_screen.dart';
+import 'tafsir_screen.dart';
+import 'share_screen.dart';
 
 /// الهيكل كما في الأصل: درج جانبي + شريط سفلي بخمسة تبويبات
 /// (الفهرس · الختمة · العلامات · المفضلة · الملاحظات) — من res/menu/bottom_navigation.xml
@@ -100,6 +102,8 @@ class _AppShellState extends State<AppShell> {
             ),
             const SizedBox(height: 6),
             _tile(Icons.wb_sunny_outlined, 'اليوم', () => go(const TodayScreen())),
+            _tile(Icons.translate_rounded, 'التفسير', () => go(const TafsirScreen())),
+            _tile(Icons.ios_share_rounded, 'مشاركة', () => go(const ShareScreen())),
             _tile(Icons.headphones_rounded, 'الاستماع للقراء', () => go(const ListenScreen())),
             _tile(Icons.alarm_rounded, 'التذكيرات', () => go(const RemindersScreen())),
             _tile(Icons.settings_outlined, 'الإعدادات', () => go(const SettingsScreen())),
